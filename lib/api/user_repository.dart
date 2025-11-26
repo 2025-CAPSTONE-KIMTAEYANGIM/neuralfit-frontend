@@ -1,3 +1,4 @@
+import 'package:neuralfit_frontend/dto/connection_try_request.dart';
 import 'package:neuralfit_frontend/model/app_user_info.dart';
 import 'package:neuralfit_frontend/dto/login_dto.dart';
 import 'package:dio/dio.dart';
@@ -70,6 +71,22 @@ class UserRepository {
       throw _handleApiException(e);
     } catch (e) {
       print('/user/my-patients unknown error: $e');
+      throw _handleUnknownException(e);
+    }
+  }
+
+  Future<void> connect(String accessToken, ConnectionTryRequest request) async {
+    try {
+      final response = await dio.post(
+        '/user/connection/try',
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+        data: request.toJson(),
+      );
+      print('/user/connection/try ${response.data}');
+    } on DioException catch (e) {
+      throw _handleApiException(e);
+    } catch (e) {
+      print('/user/connection/try unknown error: $e');
       throw _handleUnknownException(e);
     }
   }
