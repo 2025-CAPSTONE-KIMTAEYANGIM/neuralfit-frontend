@@ -157,6 +157,62 @@ class _TherapistMainScreenState extends ConsumerState<TherapistMainScreen> {
       therapistMainViewModelProvider.notifier,
     );
 
+    Widget buildEmptyState() {
+      return Center(
+        child: Padding(
+          padding: const EdgeInsets.all(40.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min, // Column 크기를 내용에 맞게 최소화
+            children: <Widget>[
+              Icon(
+                Icons.people_alt_outlined,
+                size: 80,
+                color: Colors.grey[400],
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                '아직 연결된 환자가 없습니다.',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black54,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                '환자에게 연결 코드를 공유하여 관리를 시작하세요.',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 30),
+              // 환자 연결 코드를 볼 수 있는 버튼 등을 추가할 수 있습니다.
+              OutlinedButton.icon(
+                icon: const Icon(Icons.share),
+                label: const Text('연결 코드 공유'),
+                onPressed: () {
+                  // 연결 코드 공유 로직 (예: 설정 화면으로 이동)
+                  print('연결 코드 공유 버튼 클릭');
+                },
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 15,
+                  ),
+                  foregroundColor: Colors.blueAccent,
+                  side: const BorderSide(color: Colors.blueAccent),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       bottomNavigationBar: BottomNavigationBar(
         onTap: (index) {
@@ -187,74 +243,78 @@ class _TherapistMainScreenState extends ConsumerState<TherapistMainScreen> {
           ),
         ],
       ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: RefreshIndicator(
-              onRefresh: () async {
-                await therapistMainViewModel.fetchPatients();
-              },
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minHeight: constraints.maxHeight,
-                        maxHeight: constraints.maxHeight,
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          SizedBox(
-                            height: constraints.maxHeight,
-                            child: PageView.builder(
-                              itemCount: therapistMainState.patients.length,
-                              controller: PageController(
-                                viewportFraction: 0.85,
-                              ),
-                              itemBuilder: (context, index) {
-                                // ... PatientCard 렌더링 로직
-                                return Center(
-                                  child: PatientCard(
-                                    patient: therapistMainState.patients[index],
+      body: therapistMainState.patients.isEmpty
+          ? buildEmptyState()
+          : Column(
+              children: <Widget>[
+                Expanded(
+                  child: RefreshIndicator(
+                    onRefresh: () async {
+                      await therapistMainViewModel.fetchPatients();
+                    },
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        return SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints(
+                              minHeight: constraints.maxHeight,
+                              maxHeight: constraints.maxHeight,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  height: constraints.maxHeight,
+                                  child: PageView.builder(
+                                    itemCount:
+                                        therapistMainState.patients.length,
+                                    controller: PageController(
+                                      viewportFraction: 0.85,
+                                    ),
+                                    itemBuilder: (context, index) {
+                                      // ... PatientCard 렌더링 로직
+                                      return Center(
+                                        child: PatientCard(
+                                          patient: therapistMainState
+                                              .patients[index],
+                                        ),
+                                      );
+                                    },
                                   ),
-                                );
-                              },
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
-            ),
-          ),
+                  ),
+                ),
 
-          // 페이지 인디케이터 (선택 사항)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(therapistMainState.patients.length, (
-              index,
-            ) {
-              return Container(
-                width: 8.0,
-                height: 8.0,
-                margin: const EdgeInsets.symmetric(
-                  vertical: 10.0,
-                  horizontal: 2.0,
+                // 페이지 인디케이터 (선택 사항)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(therapistMainState.patients.length, (
+                    index,
+                  ) {
+                    return Container(
+                      width: 8.0,
+                      height: 8.0,
+                      margin: const EdgeInsets.symmetric(
+                        vertical: 10.0,
+                        horizontal: 2.0,
+                      ),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.blueAccent,
+                      ),
+                    );
+                  }),
                 ),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.blueAccent,
-                ),
-              );
-            }),
-          ),
-          const SizedBox(height: 20),
-        ],
-      ),
+                const SizedBox(height: 20),
+              ],
+            ),
     );
   }
 }

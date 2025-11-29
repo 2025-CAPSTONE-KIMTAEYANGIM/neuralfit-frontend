@@ -4,10 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:neuralfit_frontend/view/screens/initial_screen.dart';
 import 'package:neuralfit_frontend/viewmodel/provider.dart'; // 클립보드 복사를 위해 필요
 
-// 🚨 주의: 이 위젯은 BottomNavigationBar를 포함해서는 안 됩니다.
-// BottomNavigationBar는 Shell Screen(상위 Scaffold)에 한 번만 정의되어야 합니다.
-// 현재 코드에서는 BottomNavigationBar 부분을 제거하고 설정 UI에 집중합니다.
-
 class TherapistSettingScreen extends ConsumerWidget {
   const TherapistSettingScreen({super.key});
 

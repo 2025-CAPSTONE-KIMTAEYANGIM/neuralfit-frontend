@@ -91,6 +91,21 @@ class UserRepository {
     }
   }
 
+  Future<void> disconnect(String accessToken, PatientInfo patient) async {
+    try {
+      final response = await dio.delete(
+        '/user/connection/${patient.id}',
+        options: Options(headers: {'Authorization': 'Bearer $accessToken'}),
+      );
+      print('DELETE /user/connection/ ${response.data}');
+    } on DioException catch (e) {
+      throw _handleApiException(e);
+    } catch (e) {
+      print('DELETE /user/connection/try unknown error: $e');
+      throw _handleUnknownException(e);
+    }
+  }
+
   ApiException _handleApiException(DioException e) {
     // 반환 타입 안정성 체크
     final data = e.response?.data;
