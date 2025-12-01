@@ -1,7 +1,10 @@
+import 'package:neuralfit_frontend/model/ai_report.dart';
+
 class MedicalRecord {
   final int id;
   final int patientId;
   final int therapistId;
+  AIReport? aiReport;
   final String? description;
   final String? patientComment;
   final DateTime consultationDate;

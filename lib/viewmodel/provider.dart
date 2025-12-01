@@ -75,8 +75,11 @@ final patientRecordViewmodelProvider =
       PatientRecordState
     >((ref) {
       final medicalRecordRepository = ref.watch(medicalRecordApiProvider);
+      final userRepository = ref.watch(userApiProvider);
+
       return PatientRecordViewmodel(
         medicalRecordRepository: medicalRecordRepository,
+        userRepository: userRepository,
         ref: ref,
       );
     });

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:neuralfit_frontend/view/screens/patient_appointment_list.dart';
+import 'package:neuralfit_frontend/view/screens/patient_insight_screen.dart';
 import 'package:neuralfit_frontend/view/screens/patient_medical_record_list.dart';
+import 'package:neuralfit_frontend/view/screens/patient_reminder_list_screen.dart';
 import 'package:neuralfit_frontend/view/screens/patient_setting_screen.dart';
 import 'package:neuralfit_frontend/viewmodel/provider.dart';
 
@@ -82,14 +85,14 @@ class _PatientMainScreenState extends ConsumerState<PatientMainScreen> {
         unselectedItemColor: Colors.grey,
         currentIndex: 0, // 현재 선택된 탭
         onTap: (index) {
-          if (index == 2) {
+          if (index == 1) {
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => PatientMedicalRecordListScreen(),
               ),
             );
-          } else if (index == 3) {
+          } else if (index == 2) {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => PatientSettingScreen()),
@@ -98,7 +101,6 @@ class _PatientMainScreenState extends ConsumerState<PatientMainScreen> {
         },
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: '메인'),
-          BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: '리포트'),
           BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
             label: '진료',
@@ -160,7 +162,10 @@ class _PatientMainScreenState extends ConsumerState<PatientMainScreen> {
               alignment: Alignment.bottomRight,
               child: OutlinedButton(
                 onPressed: () {
-                  // TODO: AI 인사이트 상세 페이지로 이동
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => InsightDetailPage()),
+                  );
                 },
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.white,
@@ -206,7 +211,12 @@ class _PatientMainScreenState extends ConsumerState<PatientMainScreen> {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () {
-                  // TODO: 문진표 작성 페이지로 이동
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => PatientAppointmentListScreen(),
+                    ),
+                  );
                 },
                 icon: const Icon(Icons.edit_note),
                 label: const Text(
@@ -244,7 +254,10 @@ class _PatientMainScreenState extends ConsumerState<PatientMainScreen> {
           alignment: Alignment.centerRight,
           child: TextButton(
             onPressed: () {
-              // TODO: 전체 리마인더 페이지로 이동
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => ReminderListPage()),
+              );
             },
             child: const Text(
               '전체 리마인더 보기 >',

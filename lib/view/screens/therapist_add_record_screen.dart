@@ -244,7 +244,6 @@ class _TherapistAddRecordState extends ConsumerState<TherapistAddRecordScreen> {
     final TherapistRecordState therapistRecordState = ref.watch(
       therapistRecordViewmodelProvider,
     );
-    final authState = ref.watch(authStateNotifierProvider);
 
     return Scaffold(
       appBar: AppBar(

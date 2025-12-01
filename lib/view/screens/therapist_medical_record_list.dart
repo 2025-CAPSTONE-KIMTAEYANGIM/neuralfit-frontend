@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neuralfit_frontend/model/medical_record.dart';
 import 'package:neuralfit_frontend/model/patient_info.dart';
+import 'package:neuralfit_frontend/view/screens/medical_record_detail_screen.dart';
 import 'package:neuralfit_frontend/view/screens/therapist_add_record_screen.dart';
 import 'package:neuralfit_frontend/viewmodel/provider.dart';
 import 'package:neuralfit_frontend/viewmodel/therapist_record_viewmodel.dart';
@@ -256,6 +257,7 @@ class _MedicalRecordListScreenState
                       return MedicalRecordListItem(
                         record: therapistRecordState.medicalRecords[index],
                         getWeekday: _getWeekday,
+                        patientInfo: therapistRecordState.currentPatient!,
                       );
                     },
                   ),
@@ -281,14 +283,15 @@ class _MedicalRecordListScreenState
   }
 }
 
-// MedicalRecordListItem 위젯은 변경 없이 그대로 유지됩니다.
 class MedicalRecordListItem extends StatelessWidget {
   final MedicalRecord record;
   final String Function(DateTime) getWeekday;
+  final PatientInfo patientInfo;
 
   const MedicalRecordListItem({
     required this.record,
     required this.getWeekday,
+    required this.patientInfo,
     super.key,
   });
 
@@ -296,6 +299,43 @@ class MedicalRecordListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final formattedDate =
         '${record.consultationDate.year}-${record.consultationDate.month.toString().padLeft(2, '0')}-${record.consultationDate.day.toString().padLeft(2, '0')}(${getWeekday(record.consultationDate)})';
+
+    // 🔥 AI 리포트 상태 위젯 생성 함수
+    Widget buildAIReportStatus() {
+      final ai = record.aiReport;
+
+      if (ai == null) {
+        // AI 리포트가 없으면 생성 버튼
+        return TextButton(
+          onPressed: () {
+            // TODO: AI 리포트 생성 API 호출
+          },
+          style: TextButton.styleFrom(foregroundColor: Colors.blue),
+          child: const Text("AI 리포트 생성"),
+        );
+      }
+
+      // AI Report가 있음 → 승인 상태 표시
+      switch (ai.approvalStatus) {
+        case "PENDING":
+          return const Text(
+            "AI 리포트 승인 대기",
+            style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold),
+          );
+        case "APPROVED":
+          return const Text(
+            "AI 리포트 승인",
+            style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+          );
+        case "REJECTED":
+          return const Text(
+            "AI 리포트 미승인",
+            style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+          );
+        default:
+          return const Text("알 수 없는 상태");
+      }
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
@@ -307,7 +347,17 @@ class MedicalRecordListItem extends StatelessWidget {
           side: BorderSide(color: Colors.grey.shade300, width: 1),
         ),
         child: InkWell(
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => MedicalRecordDetailScreen(
+                  record: record,
+                  patientInfo: patientInfo,
+                ),
+              ),
+            );
+          },
           borderRadius: BorderRadius.circular(10),
           child: Padding(
             padding: const EdgeInsets.all(12.0),
@@ -321,9 +371,8 @@ class MedicalRecordListItem extends StatelessWidget {
                       Icons.description,
                       color: Colors.black54,
                       size: 20,
-                    ), // 문서 아이콘
+                    ),
                     const SizedBox(width: 8),
-                    // 진료 날짜 및 제목
                     Expanded(
                       child: Text(
                         '[진료] $formattedDate',
@@ -338,7 +387,6 @@ class MedicalRecordListItem extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
 
-                // 상세 내용
                 Padding(
                   padding: const EdgeInsets.only(left: 28.0),
                   child: Text(
@@ -350,16 +398,23 @@ class MedicalRecordListItem extends StatelessWidget {
 
                 const SizedBox(height: 8),
 
-                // AI 리포트 상태
+                // 🔥 AI 리포트 상태
                 Padding(
                   padding: const EdgeInsets.only(left: 28.0),
-                  child: Text(
-                    "AI 리포트 상태",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "AI 리포트 상태",
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      buildAIReportStatus(),
+                    ],
                   ),
                 ),
               ],

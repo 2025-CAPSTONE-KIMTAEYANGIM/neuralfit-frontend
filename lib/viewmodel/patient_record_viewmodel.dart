@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:neuralfit_frontend/api/medical_record_repository.dart';
+import 'package:neuralfit_frontend/api/user_repository.dart';
 import 'package:neuralfit_frontend/model/app_user_info.dart';
 import 'package:neuralfit_frontend/model/medical_record.dart';
 import 'package:neuralfit_frontend/viewmodel/provider.dart';
@@ -8,10 +9,12 @@ class PatientRecordViewmodel extends StateNotifier<PatientRecordState> {
   late final String accessToken;
   final Ref ref;
   final MedicalRecordRepository medicalRecordRepository;
+  final UserRepository userRepository;
 
   PatientRecordViewmodel({
     required this.ref,
     required this.medicalRecordRepository,
+    required this.userRepository,
   }) : super(PatientRecordState()) {
     accessToken = ref.read(authStateNotifierProvider).accessToken;
     fetchRecords();
